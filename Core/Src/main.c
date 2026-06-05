@@ -36,7 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MAX_LED 16
+#define USE_BRIGHTNESS 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,8 +49,7 @@
 
 /* USER CODE BEGIN PV */
 /**********WS2812 Vaiables*********************** */
-#define MAX_LED 16
-#define USE_BRIGHTNESS 1
+
 uint8_t LED_Data[MAX_LED][4];
 uint8_t LED_Mod[MAX_LED][4];  // for brightness
 uint8_t datasentflag=0;
@@ -68,8 +68,8 @@ void SystemClock_Config(void);
 /********************WS2812 Function Prototypes*************************** */
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim);
 void WS2812_Send (void);
-void Set_LED (int LEDnum, int Red, int Green, int Blue);
-void Set_Brightness (int brightness);
+void Set_LED (uint32_t LEDnum, uint8_t Red, uint8_t Green, uint8_t Blue);
+void Set_Brightness (uint8_t brightness);
 /********************END WS2812 Function Prototypes************************** */
 
 /*********************Display Function Protypes******************************* */
@@ -189,24 +189,56 @@ void SystemClock_Config(void)
 /***************************Static Rainbow****************************** */
 void Set_Rainbow(void)
 {
-    for(int i = 0; i < MAX_LED; i++)
+    for(uint8_t i = 0; i < MAX_LED; i++)
     {
         uint8_t r, g, b;
-        int hue = (i * 360) / MAX_LED;
+        
+        // Calculate hue (0 to 359)
+        uint16_t hue = (uint16_t)i * 360u / MAX_LED;
 
-        int sector = hue / 60;
-        int remainder = hue % 60;
-        int q = (255 * (60 - remainder)) / 60;
-        int t = (255 * remainder) / 60;
+        uint8_t sector = hue / 60u;
+        uint8_t remainder = hue % 60u;
+        
+        uint8_t q = (255u * (60u - remainder)) / 60u;
+        uint8_t t = (255u * remainder) / 60u;
 
         switch(sector)
         {
-            case 0:  r=255; g=t;   b=0;   break;
-            case 1:  r=q;   g=255; b=0;   break;
-            case 2:  r=0;   g=255; b=t;   break;
-            case 3:  r=0;   g=q;   b=255; break;
-            case 4:  r=t;   g=0;   b=255; break;
-            default: r=255; g=0;   b=q;   break;
+            case 0:  
+                r = 255; 
+                g = t;   
+                b = 0;   
+                break;
+                
+            case 1:  
+                r = q;   
+                g = 255; 
+                b = 0;   
+                break;
+                
+            case 2:  
+                r = 0;   
+                g = 255; 
+                b = t;   
+                break;
+                
+            case 3:  
+                r = 0;   
+                g = q;   
+                b = 255; 
+                break;
+                
+            case 4:  
+                r = t;   
+                g = 0;   
+                b = 255; 
+                break;
+                
+            default: 
+                r = 255; 
+                g = 0;   
+                b = q;   
+                break;
         }
 
         Set_LED(i, r, g, b);
@@ -220,7 +252,7 @@ void Set_Rotating_Rainbow(void)
 {
     static uint8_t offset = 0;
 
-    for(int i = 0; i < MAX_LED; i++)
+    for(uint32_t i = 0; i < MAX_LED; i++)
     {
         uint8_t pos = (i * 16 + offset) % 256;   // 256-step color wheel for smoothness
         uint8_t r, g, b;
@@ -255,7 +287,7 @@ void Set_Rotating_Rainbow(void)
 /*---------------------------END Display Functions------------------------------------------*/
 
 /************************WS2812 Functions*************************************************** */
-void Set_LED (int LEDnum, int Red, int Green, int Blue)
+void Set_LED (uint32_t LEDnum, uint8_t Red, uint8_t Green, uint8_t Blue)
 {
 	LED_Data[LEDnum][0] = LEDnum;
 	LED_Data[LEDnum][1] = Green;
@@ -264,7 +296,7 @@ void Set_LED (int LEDnum, int Red, int Green, int Blue)
 }
 
 
-void Set_Brightness (int brightness)  // brightness: 0 to 45
+void Set_Brightness (uint8_t brightness)  // brightness: 0 to 45
 {
 #if USE_BRIGHTNESS
 
@@ -273,7 +305,7 @@ void Set_Brightness (int brightness)  // brightness: 0 to 45
 
     float scale = brightness / 45.0f;   // 0.0 to 1.0
 
-    for (int i = 0; i < MAX_LED; i++)
+    for (uint32_t i = 0; i < MAX_LED; i++)
     {
         LED_Mod[i][0] = LED_Data[i][0];           // LED number (unused)
         LED_Mod[i][1] = LED_Data[i][1] * scale;   // Green
@@ -296,7 +328,7 @@ void WS2812_Send (void)
 	uint32_t color;
 
 
-	for (int i= 0; i<MAX_LED; i++)
+	for (uint32_t i= 0; i<MAX_LED; i++)
 	{
 #if USE_BRIGHTNESS
 		color = ((LED_Mod[i][1]<<16) | (LED_Mod[i][2]<<8) | (LED_Mod[i][3]));
@@ -304,7 +336,7 @@ void WS2812_Send (void)
 		color = ((LED_Data[i][1]<<16) | (LED_Data[i][2]<<8) | (LED_Data[i][3]));
 #endif
 
-		for (int i=23; i>=0; i--)
+		for (uint8_t i=23; i>=0; i--)
 		{
 			if (color&(1<<i))
 			{
@@ -318,7 +350,7 @@ void WS2812_Send (void)
 
 	}
 
-	for (int i=0; i<50; i++)
+	for (uint8_t i=0; i<50; i++)
 	{
 		pwmData[indx] = 0;
 		indx++;

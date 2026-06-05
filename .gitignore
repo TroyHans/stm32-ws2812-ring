@@ -1,3 +1,46 @@
-build
-mx.scratch
-!.settings
+# Build directories
+build/
+Build/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# STM32CubeMX generated (keep some important files)
+*.bak
+*.db
+*.su
+*.lst
+*.map
+*.elf
+*.hex
+*.bin
+*.exe
+
+# VS Code
+.vscode/
+*.code-workspace
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Debug / Log files
+*.log
+*.swp
+*.swo
+*.dmp
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# STM32CubeMX specific (we keep .pdf and .ioc)
+# Do NOT ignore .pdf or .ioc files

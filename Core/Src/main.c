@@ -53,7 +53,7 @@
 uint8_t LED_Data[MAX_LED][4];
 uint8_t LED_Mod[MAX_LED][4];  // for brightness
 uint8_t datasentflag=0;
-uint16_t pwmData[(24*MAX_LED)+50];
+uint32_t pwmData[(24*MAX_LED)+50];
 /**********END WS2812 Variables****************** */
 
 /*****************Display Variables************************* */
@@ -189,12 +189,12 @@ void SystemClock_Config(void)
 /***************************Static Rainbow****************************** */
 void Set_Rainbow(void)
 {
-    for(uint8_t i = 0; i < MAX_LED; i++)
+    for(uint32_t i = 0; i < MAX_LED; i++)
     {
         uint8_t r, g, b;
         
         // Calculate hue (0 to 359)
-        uint16_t hue = (uint16_t)i * 360u / MAX_LED;
+        uint32_t hue = (i * 360u) / MAX_LED;
 
         uint8_t sector = hue / 60u;
         uint8_t remainder = hue % 60u;
@@ -204,41 +204,12 @@ void Set_Rainbow(void)
 
         switch(sector)
         {
-            case 0:  
-                r = 255; 
-                g = t;   
-                b = 0;   
-                break;
-                
-            case 1:  
-                r = q;   
-                g = 255; 
-                b = 0;   
-                break;
-                
-            case 2:  
-                r = 0;   
-                g = 255; 
-                b = t;   
-                break;
-                
-            case 3:  
-                r = 0;   
-                g = q;   
-                b = 255; 
-                break;
-                
-            case 4:  
-                r = t;   
-                g = 0;   
-                b = 255; 
-                break;
-                
-            default: 
-                r = 255; 
-                g = 0;   
-                b = q;   
-                break;
+            case 0:  r = 255; g = t;   b = 0;   break;
+            case 1:  r = q;   g = 255; b = 0;   break;
+            case 2:  r = 0;   g = 255; b = t;   break;
+            case 3:  r = 0;   g = q;   b = 255; break;
+            case 4:  r = t;   g = 0;   b = 255; break;
+            default: r = 255; g = 0;   b = q;   break;
         }
 
         Set_LED(i, r, g, b);

@@ -48,16 +48,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-/**********WS2812 Vaiables*********************** */
-
+/********** WS2812 Variables ***********************/
 uint8_t LED_Data[MAX_LED][4];
-uint8_t LED_Mod[MAX_LED][4];  // for brightness
-uint8_t datasentflag=0;
-uint32_t pwmData[(24*MAX_LED)+50];
-/**********END WS2812 Variables****************** */
+uint8_t LED_Mod[MAX_LED][4];   // for brightness
+uint8_t datasentflag = 0;
+uint32_t pwmData[(24u * MAX_LED) + 50];
+/********** END WS2812 Variables *******************/
 
 /*****************Display Variables************************* */
-int rainbow_offset = 0;   // ← Add this for rotation
 
 /*******************END Display Variables********************** */
 /* USER CODE END PV */
@@ -65,17 +63,15 @@ int rainbow_offset = 0;   // ← Add this for rotation
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-/********************WS2812 Function Prototypes*************************** */
+/* WS2812 Function Prototypes */
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim);
-void WS2812_Send (void);
-void Set_LED (uint32_t LEDnum, uint8_t Red, uint8_t Green, uint8_t Blue);
-void Set_Brightness (uint8_t brightness);
-/********************END WS2812 Function Prototypes************************** */
+void WS2812_Send(void);
+void Set_LED(uint32_t LEDnum, uint8_t Red, uint8_t Green, uint8_t Blue);
+void Set_Brightness(uint8_t brightness);
 
-/*********************Display Function Protypes******************************* */
+/* Animation Function Prototypes */
 void Set_Rainbow(void);
 void Set_Rotating_Rainbow(void);
-/********************ENS Display Function Prototypes*************************** */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

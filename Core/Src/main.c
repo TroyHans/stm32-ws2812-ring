@@ -127,7 +127,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-   Test_Sequential_Colors(50);
+     Test_Sequential_Colors(50);
+    /*Set_Rotating_Rainbow();
+    Set_Brightness(15);
+    WS2812_Send();
+    HAL_Delay(30);          // Fast refresh rate for smooth animation*/
   }
   /* USER CODE END 3 */
 }

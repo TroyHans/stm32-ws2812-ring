@@ -127,8 +127,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-     Test_Sequential_Colors(50);
-    /*Set_Rotating_Rainbow();
+    //Test_Sequential_Colors(100);
+    Set_Rotating_Rainbow();
     Set_Brightness(15);
     WS2812_Send();
     HAL_Delay(30);          // Fast refresh rate for smooth animation*/
@@ -248,7 +248,7 @@ void Set_Rotating_Rainbow(void)
         Set_LED(i, r, g, b);
     }
 
-    offset += 6;        // ← Change this number to control speed (2=slow, 8=fast)
+    offset += 4;        // ← Change this number to control speed (2=slow, 8=fast)
 }
 /***************************END Rotating Rainbow****************************************** */
 

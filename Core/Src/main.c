@@ -100,13 +100,17 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    //Set_All_LEDs(255, 0, 0);
-    //Test_Sequential_Colors(50);
-    //Set_Rainbow();
-    Set_Rotating_Rainbow(3);
-    Set_Brightness(20);
-    WS2812_Send();
-    HAL_Delay(30);
+// === Available Self-Contained Functions ===
+
+    //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
+
+    Set_Rotating_Rainbow(2, 10, 10);         // Rotating rainbow (speed, brightness, delay)
+                                             // speed: 1 = very slow, 4 = normal, 8 = fast
+
+    //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
+
+    //Test_Sequential_Colors(30, 45);         // Test pattern: Red → Green → Blue laps
+                                             // (delay per LED, brightness)
   }
      /* USER CODE END 3 */
 }

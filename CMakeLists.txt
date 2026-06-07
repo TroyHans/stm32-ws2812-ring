@@ -44,11 +44,13 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    Core/Src/ws2812.c     # ← WS2812 Library
     # Add user sources here
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    Core/Inc              # ← So it can find ws2812.h
     # Add user defined include paths
 )
 

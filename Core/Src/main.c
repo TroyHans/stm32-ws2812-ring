@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdlib.h>
 #include "ws2812.h"
 /* USER CODE END Includes */
 
@@ -47,8 +48,11 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+
 /* USER CODE BEGIN PFP */
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim);
+void Set_Random_Flash(uint8_t brightness, uint16_t delay_ms);
+void Set_Cylon(uint8_t brightness, uint8_t red, uint8_t green, uint8_t blue, uint16_t delay_ms);
+void Run_Animations_With_Button(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -100,11 +104,16 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+    Run_Animations_With_Button();
+
+    //Set_Random_Flash(15, 60);     // brightness, delay_ms
+    //Set_Cylon(35, 255, 0, 0, 60);      // Classic Red Cylon
+
 // === Available Self-Contained Functions ===
 
     //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
 
-    Set_Rotating_Rainbow(2, 10, 10);         // Rotating rainbow (speed, brightness, delay)
+    //Set_Rotating_Rainbow(2, 10, 10);         // Rotating rainbow (speed, brightness, delay)
                                              // speed: 1 = very slow, 4 = normal, 8 = fast
 
     //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
@@ -161,6 +170,131 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void Set_Random_Flash(uint8_t brightness, uint16_t delay_ms)
+{
+    // Clear the ring first
+    Set_All_LEDs(0, 0, 0, 0, 0);
+
+    // Create random vibrant flashes
+    for(int i = 0; i < MAX_LED; i++)
+    {
+        if (rand() % 100 < 40)        // ~40% chance per LED to flash
+        {
+            uint8_t intensity = 140 + (rand() % 116);   // 140-255 (brighter flashes)
+
+            uint8_t r, g, b;
+
+            // Better random color distribution for rich primary/secondary colors
+            switch(rand() % 8)
+            {
+                case 0:  r = intensity; g = 0;         b = 0;         break; // Red
+                case 1:  r = 0;         g = intensity; b = 0;         break; // Green
+                case 2:  r = 0;         g = 0;         b = intensity; break; // Blue
+                case 3:  r = intensity; g = intensity; b = 0;         break; // Yellow
+                case 4:  r = intensity; g = 0;         b = intensity; break; // Magenta
+                case 5:  r = 0;         g = intensity; b = intensity; break; // Cyan
+                case 6:  r = intensity; g = intensity/2; b = 0;       break; // Orange
+                default: r = intensity; g = intensity; b = intensity; break; // White (rare)
+            }
+
+            Set_LED(i, r, g, b);
+        }
+    }
+
+    Set_Brightness(brightness);
+    WS2812_Send();
+    HAL_Delay(delay_ms);
+}
+
+void Set_Cylon(uint8_t brightness, uint8_t red, uint8_t green, uint8_t blue, uint16_t delay_ms)
+{
+    static int8_t position = 0;
+    static int8_t direction = 1;
+
+    // Clear everything
+    Set_All_LEDs(0, 0, 0, 0, 0);
+
+    // Draw the scanning eye with trail
+    for(int i = -2; i <= 2; i++)
+    {
+        int pos = position + i;
+        if (pos >= 0 && pos < MAX_LED)
+        {
+            uint8_t intensity = (i == 0) ? 255 : (90 - (abs(i) * 30));
+            if (intensity > 0)
+            {
+                // Apply color with intensity falloff for the trail
+                Set_LED(pos, 
+                        (uint8_t)(red * intensity / 255),
+                        (uint8_t)(green * intensity / 255),
+                        (uint8_t)(blue * intensity / 255));
+            }
+        }
+    }
+
+    // Move the eye
+    position += direction;
+
+    // Bounce at the ends
+    if (position >= MAX_LED - 1 || position <= 0)
+    {
+        direction = -direction;
+    }
+
+    Set_Brightness(brightness);
+    WS2812_Send();
+    HAL_Delay(delay_ms);
+}
+
+/*=====================Button switch+++++++++++++++++++++++++++++++++++++++++++*/
+void Run_Animations_With_Button(void)
+{
+    static uint8_t current_mode = 0;
+    static uint32_t last_press_time = 0;
+    static uint8_t button_state = 1;   // Button active low
+
+    uint32_t now = HAL_GetTick();
+
+    // Button debouncing
+    uint8_t current_button = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+
+    if (current_button == 0 && button_state == 1 && (now - last_press_time > 250))
+    {
+        last_press_time = now;
+        button_state = 0;
+
+        current_mode = (current_mode + 1) % 4;   // Cycle through 4 animations
+    }
+    else if (current_button == 1)
+    {
+        button_state = 1;
+    }
+
+    // === Animation Modes ===
+    switch(current_mode)
+    {
+        case 0:
+            Set_Rotating_Rainbow(2, 10, 10);      // Slow relaxing rainbow
+            break;
+
+        case 1:
+            Test_Sequential_Colors(30, 45);
+            break;
+
+        case 2:
+            Set_Random_Flash(10, 60);
+            break;
+
+        case 3:
+            Set_Cylon(35, 255, 0, 0, 40);         // Red Cylon
+            break;
+
+        default:                                  // Should never reach here
+            current_mode = 0;
+            Set_Rotating_Rainbow(2, 10, 10);
+            break;
+    }
+}
 /* USER CODE END 4 */
 
 /**

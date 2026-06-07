@@ -1,50 +1,65 @@
 # STM32 WS2812 LED Ring
 
-A simple yet clean WS2812 (NeoPixel) driver for a 16-LED ring using **STM32 + Timer PWM + DMA**.
+A clean, reusable WS2812 (NeoPixel) driver for STM32 using Timer PWM + DMA.
 
 ## Features
 
-- Smooth rotating rainbow animation
-- Adjustable rotation speed
-- Brightness control (static or breathing ready)
-- Clean, well-organized code structure
-- Built with STM32CubeMX + CMake
+- Self-contained animation functions (brightness, send, and delay handled inside each function)
+- Adjustable speed and brightness per animation
+- Easy to copy into new projects as a library
+- Built with STM32CubeMX + CMake + VS Code
 
-## Hardware
+## How to Install in a New Project
 
-- STM32 (tested on common Nucleo/F4 boards)
-- 16-LED WS2812 ring
-- 5V power supply with proper decoupling
-- Data pin connected to TIM1_CH1 (PA8 by default)
+1. Copy ws2812.h to Core/Inc/
+2. Copy ws2812.c to Core/Src/
 
-## Software Setup
+3. Update CMakeLists.txt:
+   Add Core/Src/ws2812.c to target_sources()
+   Add Core/Inc to target_include_directories()
 
-1. Open project in VS Code
-2. Configure CMake (Kit + build)
-3. Build: `cmake --build build`
-4. Flash using ST-Link / OpenOCD / STM32CubeProgrammer
+4. Update main.c:
+   Add #include "ws2812.h" in USER CODE BEGIN Includes
+   In USER CODE BEGIN PD:
+   #define MAX_LED 16
+   #define USE_BRIGHTNESS 1
+   In USER CODE BEGIN 2:
+   WS2812_Init();
 
-## Code Structure
+## Main Loop Examples
 
-- `main.c` → Main logic and animation
-- `Set_Rainbow()` → Static rainbow
-- `Set_Rotating_Rainbow()` → Smooth rotating effect
-- `Set_Brightness()` → Brightness scaling
-- `WS2812_Send()` → DMA + Timer driver
+while (1)
+{
+/_ USER CODE BEGIN 3 _/
 
-## How to Customize
+    Set_Rotating_Rainbow(3, 20, 30);     // speed, brightness, delay
+    // Set_Rainbow(25, 500);
+    // Set_All_LEDs(255, 0, 0, 40, 500);
+    // Test_Sequential_Colors(80, 45);
 
-- Change rotation speed: Modify `offset += X` in `Set_Rotating_Rainbow()`
-- Change brightness: Adjust value in `Set_Brightness(35)`
-- Add new effects: Create new functions similar to `Set_Rotating_Rainbow()`
+    /* USER CODE END 3 */
 
-## Next Steps / Ideas
+}
 
-- Breathing effect (brightness pulse)
-- Multiple animation modes (button selectable)
-- Gamma correction for better colors
-- Non-blocking timing with timers
+## Function Reference
 
----
+Set_Rotating_Rainbow(speed, brightness, delay_ms) - Rotating rainbow. Speed: 1=very slow, 4=normal, 8=fast
+Set_Rainbow(brightness, delay_ms) - Static full rainbow
+Set_All_LEDs(r, g, b, brightness, delay_ms) - Solid single color
+Test_Sequential_Colors(delay_ms, brightness) - One LED at a time: Red → Green → Blue
+
+## Parameter Guide
+
+- speed: 1 (very slow) to 8+ (fast)
+- brightness: 1 to 45 (15-30 recommended)
+- delay_ms: 10 to 500 (30 is good for smooth animation)
+
+## Library Structure
+
+The driver is split into ws2812.h + ws2812.c (in Core/ folder). A standalone copy is in the ws2812_driver/ folder for easy reuse.
+
+## Hardware Configuration
+
+Requires a timer configured for ~800kHz PWM with DMA support and DMA interrupt enabled.
 
 **Happy Hacking!** 🚀

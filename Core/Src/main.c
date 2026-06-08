@@ -104,9 +104,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    Run_Animations_With_Button();
+    //Run_Animations_With_Button();
 
-    //Set_Random_Flash(15, 60);     // brightness, delay_ms
+    Set_Random_Flash(10, 50);     // brightness, delay_ms
     //Set_Cylon(35, 255, 0, 0, 60);      // Classic Red Cylon
 
 // === Available Self-Contained Functions ===
@@ -251,19 +251,22 @@ void Run_Animations_With_Button(void)
 {
     static uint8_t current_mode = 0;
     static uint32_t last_press_time = 0;
-    static uint8_t button_state = 1;   // Button active low
+    static uint8_t button_state = 1;
 
     uint32_t now = HAL_GetTick();
 
-    // Button debouncing
     uint8_t current_button = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 
-    if (current_button == 0 && button_state == 1 && (now - last_press_time > 250))
+    // Stronger edge detection
+    if (current_button == 0 && button_state == 1 && (now - last_press_time > 20))
     {
         last_press_time = now;
         button_state = 0;
 
-        current_mode = (current_mode + 1) % 4;   // Cycle through 4 animations
+        current_mode = (current_mode + 1) % 4;
+        
+        // Optional: Force clear LEDs when switching modes
+        Set_All_LEDs(0, 0, 0, 0, 0);
     }
     else if (current_button == 1)
     {
@@ -274,11 +277,11 @@ void Run_Animations_With_Button(void)
     switch(current_mode)
     {
         case 0:
-            Set_Rotating_Rainbow(2, 10, 10);      // Slow relaxing rainbow
+            Set_Rotating_Rainbow(2, 10, 10);
             break;
 
         case 1:
-            Test_Sequential_Colors(30, 45);
+            Test_Sequential_Colors(30, 45);     // stays at your desired speed
             break;
 
         case 2:
@@ -286,10 +289,10 @@ void Run_Animations_With_Button(void)
             break;
 
         case 3:
-            Set_Cylon(35, 255, 0, 0, 40);         // Red Cylon
+            Set_Cylon(35, 255, 0, 0, 40);
             break;
 
-        default:                                  // Should never reach here
+        default:
             current_mode = 0;
             Set_Rotating_Rainbow(2, 10, 10);
             break;

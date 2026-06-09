@@ -106,19 +106,19 @@ int main(void)
 
     //Run_Animations_With_Button();
 
-    Set_Random_Flash(10, 50);     // brightness, delay_ms
-    //Set_Cylon(35, 255, 0, 0, 60);      // Classic Red Cylon
+    //Set_Random_Flash(20, 40);     // brightness, delay_ms
+    //Set_Cylon(35, 255, 0, 0, 10);      // Classic Red Cylon
 
 // === Available Self-Contained Functions ===
 
     //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
 
-    //Set_Rotating_Rainbow(2, 10, 10);         // Rotating rainbow (speed, brightness, delay)
+    Set_Rotating_Rainbow(1, 10, 20);         // Rotating rainbow (speed, brightness, delay)
                                              // speed: 1 = very slow, 4 = normal, 8 = fast
 
     //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
 
-    //Test_Sequential_Colors(30, 45);         // Test pattern: Red → Green → Blue laps
+    //Test_Sequential_Colors(10, 45);         // Test pattern: Red → Green → Blue laps
                                              // (delay per LED, brightness)
   }
      /* USER CODE END 3 */

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MAX_LED        16      
+#define MAX_LED        28      
 #define USE_BRIGHTNESS 1
 
 // These are defined in main.c

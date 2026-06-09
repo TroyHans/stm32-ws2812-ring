@@ -118,9 +118,11 @@ void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
 {
     static uint8_t offset = 0;
 
-    for(int i = 0; i < MAX_LED; i++)
+    for(uint32_t i = 0; i < MAX_LED; i++)
     {
-        uint8_t pos = (i * 16 + offset) % 256;
+        // Better spread for 28 pixels - one smooth rainbow across the whole chain
+        uint8_t pos = (uint8_t)((i * 9u + offset) % 256u);
+
         uint8_t r, g, b;
 
         if(pos < 85)
@@ -147,12 +149,56 @@ void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
         Set_LED(i, r, g, b);
     }
 
-    offset += speed;
+    offset = (offset + speed) % 256;
 
     Set_Brightness(brightness);
     WS2812_Send();
     HAL_Delay(delay_ms);
 }
+
+/*void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
+{
+    static uint8_t offset = 0;
+
+    for(uint32_t i = 0; i < MAX_LED; i++)
+    {
+        // Changed offset direction to match clockwise physical wiring
+        uint8_t pos = (uint8_t)((i * 16u + (256u - offset)) % 256u);
+        
+        uint8_t r, g, b;
+
+        if(pos < 85)
+        {
+            r = pos * 3;
+            g = 255 - pos * 3;
+            b = 0;
+        }
+        else if(pos < 170)
+        {
+            pos -= 85;
+            r = 255 - pos * 3;
+            g = 0;
+            b = pos * 3;
+        }
+        else
+        {
+            pos -= 170;
+            r = 0;
+            g = pos * 3;
+            b = 255 - pos * 3;
+        }
+
+        Set_LED(i, r, g, b);
+    }
+
+    offset = (offset + speed) % 256;
+
+    Set_Brightness(brightness);
+    WS2812_Send();
+    HAL_Delay(delay_ms);
+} */
+
+
 
 void Set_All_LEDs(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness, uint16_t delay_ms)
 {

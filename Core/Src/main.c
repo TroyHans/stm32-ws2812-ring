@@ -52,6 +52,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void Set_Random_Flash(uint8_t brightness, uint16_t delay_ms);
 void Set_Cylon(uint8_t brightness, uint8_t red, uint8_t green, uint8_t blue, uint16_t delay_ms);
+void Set_Fire(uint8_t intensity, uint16_t delay_ms);
+void Set_Theater_Chase(uint8_t speed, uint8_t brightness, uint16_t delay_ms);
 void Run_Animations_With_Button(void);
 /* USER CODE END PFP */
 
@@ -113,13 +115,17 @@ int main(void)
 
     //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
 
-    Set_Rotating_Rainbow(1, 10, 20);         // Rotating rainbow (speed, brightness, delay)
+    Set_Rotating_Rainbow(1, 10, 10);         // Rotating rainbow (speed, brightness, delay)
                                              // speed: 1 = very slow, 4 = normal, 8 = fast
 
     //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
 
-    //Test_Sequential_Colors(10, 45);         // Test pattern: Red → Green → Blue laps
+    //Test_Sequential_Colors(15, 45);         // Test pattern: Red → Green → Blue laps
                                              // (delay per LED, brightness)
+
+    //Set_Fire(25, 35);     // intensity 20-45, delay 30-60 looks good
+
+    //Set_Theater_Chase(2, 10, 100);
   }
      /* USER CODE END 3 */
 }
@@ -246,6 +252,75 @@ void Set_Cylon(uint8_t brightness, uint8_t red, uint8_t green, uint8_t blue, uin
     HAL_Delay(delay_ms);
 }
 
+void Set_Fire(uint8_t intensity, uint16_t delay_ms)
+{
+    static uint8_t heat[MAX_LED];
+
+    for(uint32_t i = 0; i < MAX_LED; i++)
+    {
+        // Cool down each pixel a little
+        if (heat[i] > 15)
+            heat[i] -= 15;
+        else
+            heat[i] = 0;
+
+        // Random sparks from the bottom
+        if (i < (MAX_LED / 3) && (rand() % 100 < 40))
+        {
+            heat[i] = 180 + (rand() % 76);   // Bright base
+        }
+    }
+
+    // Heat spreads upward
+    for(uint32_t i = MAX_LED - 1; i >= 3; i--)
+    {
+        heat[i] = (heat[i-1] + heat[i-2] + heat[i-3]) / 3;
+    }
+
+    // Apply colors
+    for(uint32_t i = 0; i < MAX_LED; i++)
+    {
+        uint8_t temperature = heat[i];
+
+        if (temperature > 180)
+            Set_LED(i, 255, 80 + (rand()%60), 0);           // Hot white/yellow
+        else if (temperature > 120)
+            Set_LED(i, 255, 60 + (rand()%60), 0);           // Bright orange
+        else if (temperature > 60)
+            Set_LED(i, 255, 20 + (rand()%50), 0);           // Warm red/orange
+        else
+            Set_LED(i, 180, 10, 0);                         // Dim red
+    }
+
+    Set_Brightness(intensity);
+    WS2812_Send();
+    HAL_Delay(delay_ms);
+}
+
+void Set_Theater_Chase(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
+{
+    static uint8_t offset = 0;
+
+    for(uint32_t i = 0; i < MAX_LED; i++)
+    {
+        if ((i + offset) % 3 == 0)
+        {
+            // Bright white/yellow chase lights
+            Set_LED(i, 255, 180, 50);
+        }
+        else
+        {
+            // Dim background
+            Set_LED(i, 20, 5, 0);
+        }
+    }
+
+    offset = (offset + speed) % 3;     // Moves every 3 steps for classic look
+
+    Set_Brightness(brightness);
+    WS2812_Send();
+    HAL_Delay(delay_ms);
+}
 /*=====================Button switch+++++++++++++++++++++++++++++++++++++++++++*/
 void Run_Animations_With_Button(void)
 {

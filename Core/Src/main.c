@@ -115,8 +115,8 @@ int main(void)
 
     //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
 
-    Set_Rotating_Rainbow(1, 10, 10);         // Rotating rainbow (speed, brightness, delay)
-                                             // speed: 1 = very slow, 4 = normal, 8 = fast
+    Set_Rotating_Rainbow_V2(1, 10, 10);         // Rotating rainbow 28 pixels (speed, brightness, delay)
+    Set_Rotating_Rainbow_V1(1, 10, 10);         // Rotating rainbow 16 pixels  (speed, brightness, delay)
 
     //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
 

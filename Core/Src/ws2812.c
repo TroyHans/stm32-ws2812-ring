@@ -114,7 +114,7 @@ void Set_Rainbow(uint8_t brightness, uint16_t delay_ms)
     HAL_Delay(delay_ms);
 }
 
-void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
+void Set_Rotating_Rainbow_V2(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
 {
     static uint8_t offset = 0;
 
@@ -155,8 +155,7 @@ void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
     WS2812_Send();
     HAL_Delay(delay_ms);
 }
-
-/*void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
+void Set_Rotating_Rainbow_V1(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
 {
     static uint8_t offset = 0;
 
@@ -196,7 +195,7 @@ void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms)
     Set_Brightness(brightness);
     WS2812_Send();
     HAL_Delay(delay_ms);
-} */
+} 
 
 
 

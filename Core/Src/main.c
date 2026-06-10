@@ -115,12 +115,12 @@ int main(void)
 
     //Set_Rainbow(20, 500);                    // Static rainbow, brightness + delay
 
-    Set_Rotating_Rainbow_V2(1, 10, 10);         // Rotating rainbow 28 pixels (speed, brightness, delay)
-    Set_Rotating_Rainbow_V1(1, 10, 10);         // Rotating rainbow 16 pixels  (speed, brightness, delay)
+    //Set_Rotating_Rainbow_V2(1, 10, 5);         // Rotating rainbow 28 pixels (speed, brightness, delay)
+    //Set_Rotating_Rainbow_V1(1, 10, 10);         // Rotating rainbow 16 pixels  (speed, brightness, delay)
 
-    //Set_All_LEDs(255, 0, 0, 40, 500);       // Solid color (R, G, B, brightness, delay)
+    //Set_All_LEDs(255, 0, 0, 5, 500);       // Solid color (R, G, B, brightness, delay)
 
-    //Test_Sequential_Colors(15, 45);         // Test pattern: Red → Green → Blue laps
+    Test_Sequential_Colors(20, 10);         // Test pattern: Red → Green → Blue laps
                                              // (delay per LED, brightness)
 
     //Set_Fire(25, 35);     // intensity 20-45, delay 30-60 looks good
@@ -352,7 +352,7 @@ void Run_Animations_With_Button(void)
     switch(current_mode)
     {
         case 0:
-            Set_Rotating_Rainbow(2, 10, 10);
+            Set_Rotating_Rainbow_V2(2, 10, 10);
             break;
 
         case 1:
@@ -369,7 +369,7 @@ void Run_Animations_With_Button(void)
 
         default:
             current_mode = 0;
-            Set_Rotating_Rainbow(2, 10, 10);
+            Set_Rotating_Rainbow_V2(2, 10, 10);
             break;
     }
 }

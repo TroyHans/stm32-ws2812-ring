@@ -18,7 +18,8 @@ void WS2812_Send(void);
 
 // Self-contained Animation Functions
 void Set_Rainbow(uint8_t brightness, uint16_t delay_ms);
-void Set_Rotating_Rainbow(uint8_t speed, uint8_t brightness, uint16_t delay_ms);
+void Set_Rotating_Rainbow_V2(uint8_t speed, uint8_t brightness, uint16_t delay_ms);
+void Set_Rotating_Rainbow_V1(uint8_t speed, uint8_t brightness, uint16_t delay_ms);
 void Set_All_LEDs(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness, uint16_t delay_ms);
 void Test_Sequential_Colors(uint16_t delay_ms, uint8_t brightness);
 
